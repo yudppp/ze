@@ -2,7 +2,7 @@
 
 Fast and intuitive Zellij session manager with real-time search. Simplify your Zellij workflow with intuitive keyboard-driven operations.
 
-![Ze Demo](./assets/demo.gif)
+<img src="./assets/demo.gif" width="400">
 
 ## Installation
 
