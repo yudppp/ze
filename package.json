@@ -1,0 +1,59 @@
+{
+  "name": "ze-cli",
+  "version": "0.1.0",
+  "description": "Fast and intuitive Zellij session manager with real-time search",
+  "type": "module",
+  "main": "dist/cli.js",
+  "bin": {
+    "ze": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc && esbuild src/cli.tsx --bundle --platform=node --format=esm --outfile=dist/cli.js --external:ink --external:react",
+    "dev": "tsc --watch",
+    "start": "node dist/cli.js",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "zellij",
+    "cli",
+    "terminal",
+    "multiplexer",
+    "session-manager",
+    "fzf",
+    "interactive"
+  ],
+  "author": "yudppp",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yudppp/ze.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yudppp/ze/issues"
+  },
+  "homepage": "https://github.com/yudppp/ze#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.4",
+    "@types/react": "^19.1.8",
+    "esbuild": "^0.25.5",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "fuse.js": "^7.1.0",
+    "ink": "^6.0.1",
+    "ink-text-input": "^6.0.0",
+    "meow": "^13.2.0",
+    "react": "^19.1.0"
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ]
+}

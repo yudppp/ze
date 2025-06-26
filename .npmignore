@@ -1,0 +1,31 @@
+# Source files
+src/
+*.tsx
+*.ts
+!dist/**
+
+# Development files
+tsconfig.json
+.gitignore
+DESIGN.md
+
+# Git
+.git/
+.github/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Dependencies
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
