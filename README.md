@@ -2,6 +2,8 @@
 
 Fast and intuitive Zellij session manager with real-time search. Simplify your Zellij workflow with intuitive keyboard-driven operations.
 
+<img src="./assets/demo.gif" width="400">
+
 ## Installation
 
 ```bash
