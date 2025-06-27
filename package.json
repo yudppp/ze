@@ -11,6 +11,8 @@
     "build": "tsc && esbuild src/cli.tsx --bundle --platform=node --format=esm --outfile=dist/cli.js --external:ink --external:react",
     "dev": "tsc --watch",
     "start": "node dist/cli.js",
+    "test": "node --test src/**/*.test.js",
+    "test:watch": "node --test --watch src/**/*.test.js",
     "prepare": "npm run build",
     "prepublishOnly": "npm run build"
   },
