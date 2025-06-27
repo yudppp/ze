@@ -52,13 +52,13 @@ ze
 ## Keyboard Shortcuts
 
 - **Navigation**
-  - `↑`/`↓` or `j`/`k` - Navigate through items
+  - `↑`/`↓` or `Ctrl+j`/`Ctrl+k` - Navigate through items
   - `Enter` - Select item or confirm input
   - `Esc` or `Ctrl+C` - Cancel current action or exit
 
 - **Search**
-  - Type any characters - Filter sessions by name
-  - `Backspace` - Clear search character by character
+  - Type any characters - Filter sessions by name (incremental search)
+  - `Backspace` or `Delete` - Clear search character by character
 
 - **Session Management**
   - `Ctrl+D` - Delete selected session (when outside Zellij)
