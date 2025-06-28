@@ -145,7 +145,7 @@ const App: React.FC = () => {
 					)}
 				</Box>
 				<Box borderStyle="round" borderColor="gray" padding={1}>
-					<SelectList items={layoutActions} onSelect={handleSelect} />
+					<SelectList items={layoutActions} onSelect={handleSelect} disableSearch={true} />
 				</Box>
 			</Box>
 		);

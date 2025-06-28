@@ -6,10 +6,15 @@ export interface SearchableItem {
   name?: string;
 }
 
-export function useIncrementalSearch<T extends SearchableItem>(items: T[]) {
+export function useIncrementalSearch<T extends SearchableItem>(items: T[], disableSearch = false) {
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredItems = useMemo(() => {
+    // If search is disabled, return items as-is
+    if (disableSearch) {
+      return items;
+    }
+
     const filtered = searchQuery 
       ? items.filter(item => {
           const label = item.label || item.name || '';
@@ -39,7 +44,7 @@ export function useIncrementalSearch<T extends SearchableItem>(items: T[]) {
     };
     
     return [...filtered, newSessionAction as unknown as T];
-  }, [searchQuery, items]);
+  }, [searchQuery, items, disableSearch]);
 
   const addChar = useCallback((char: string) => {
     setSearchQuery(prev => prev + char);

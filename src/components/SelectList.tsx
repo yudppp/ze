@@ -8,12 +8,13 @@ interface SelectListProps {
 	items: (Action | SessionInfo)[];
 	onSelect: (item: Action | SessionInfo) => void;
 	onDelete?: (item: Action | SessionInfo) => void;
+	disableSearch?: boolean;
 }
 
 
-const SelectList: React.FC<SelectListProps> = ({items, onSelect, onDelete}) => {
+const SelectList: React.FC<SelectListProps> = ({items, onSelect, onDelete, disableSearch = false}) => {
 	
-	const { searchQuery, filteredItems, addChar, removeChar, clearSearch } = useIncrementalSearch(items);
+	const { searchQuery, filteredItems, addChar, removeChar, clearSearch } = useIncrementalSearch(items, disableSearch);
 	const { selectedIndex, currentItem, moveUp, moveDown, resetSelection } = useSelection(filteredItems);
 
 
@@ -31,21 +32,25 @@ const SelectList: React.FC<SelectListProps> = ({items, onSelect, onDelete}) => {
 				onSelect(currentItem);
 			}
 		} else if (key.backspace || key.delete) {
-			removeChar();
+			if (!disableSearch) {
+				removeChar();
+			}
 		} else if ((input === 'd' && key.ctrl) && onDelete) {
 			if (currentItem && 'deletable' in currentItem && currentItem.deletable) {
 				onDelete(currentItem);
 			}
 		} else if (input && !key.ctrl && !key.meta && !key.shift) {
-			addChar(input);
-			resetSelection();
+			if (!disableSearch) {
+				addChar(input);
+				resetSelection();
+			}
 		}
 	});
 
 
 	return (
 		<Box flexDirection="column">
-			{searchQuery && (
+			{searchQuery && !disableSearch && (
 				<Box marginBottom={1}>
 					<Text color="gray">Search: </Text>
 					<Text color="yellow">{searchQuery}</Text>
@@ -75,7 +80,7 @@ const SelectList: React.FC<SelectListProps> = ({items, onSelect, onDelete}) => {
 			})}
 			<Box marginTop={1}>
 				<Text color="gray" dimColor>
-					↑/↓ or Ctrl+j/k: Navigate • Enter: Select{onDelete ? ' • Ctrl+D: Delete' : ''}{searchQuery ? ' • Backspace/Del: Clear' : ' • Type: Search'} • Esc: Exit
+					↑/↓ or Ctrl+j/k: Navigate • Enter: Select{onDelete ? ' • Ctrl+D: Delete' : ''}{!disableSearch ? (searchQuery ? ' • Backspace/Del: Clear' : ' • Type: Search') : ''} • Esc: Exit
 				</Text>
 			</Box>
 		</Box>
