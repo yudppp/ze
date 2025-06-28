@@ -1,19 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
 
-test('separator detection works correctly', () => {
-  const isSeparator = (item) => {
-    return 'label' in item && item.label === '---';
-  };
-
-  const separatorItem = { label: '---' };
-  const normalItem = { label: 'session1' };
-  const nameItem = { name: 'session2' };
-
-  assert.strictEqual(isSeparator(separatorItem), true);
-  assert.strictEqual(isSeparator(normalItem), false);
-  assert.strictEqual(isSeparator(nameItem), false);
-});
 
 test('deletable item check works correctly', () => {
   const isDeletable = (item) => {

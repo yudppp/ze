@@ -32,7 +32,6 @@ export function listSessions(): SessionInfo[] {
       let timeInfo = createdTime || 'active';
       
       return {
-        id: name,
         name,
         created: timeInfo,
         isActive: !status.includes('EXITED')
@@ -43,15 +42,6 @@ export function listSessions(): SessionInfo[] {
   }
 }
 
-export function getSessionDetails(sessionName: string): { tabs: string[], panes: number } {
-  // Note: Zellij doesn't have a direct command to get session details
-  // This is a placeholder that would need to be implemented with
-  // more complex parsing or future zellij features
-  return {
-    tabs: [],
-    panes: 0
-  };
-}
 
 export function listLayouts(): string[] {
   try {
@@ -73,14 +63,5 @@ export function listLayouts(): string[] {
     }
   } catch (error) {
     return ['default', 'compact', 'classic'];
-  }
-}
-
-export function executeZellijCommand(command: string): void {
-  try {
-    execSync(command, { stdio: 'inherit' });
-  } catch (error) {
-    console.error(`Failed to execute: ${command}`);
-    process.exit(1);
   }
 }

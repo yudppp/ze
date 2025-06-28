@@ -13,12 +13,18 @@ const cli = meow(
 	  Fast and intuitive Zellij session manager with real-time search
 
 	Navigation
-	  ↑/↓ or j/k     Navigate through items
-	  Enter          Select item or confirm
-	  Esc or Ctrl+C  Cancel or exit
-	  Type           Filter sessions by name
-	  Backspace      Clear search
-	  Ctrl+D         Delete session (outside Zellij)
+	  ↑/↓ or Ctrl+j/k   Navigate through items
+	  Enter             Select item or confirm
+	  Esc or Ctrl+C     Cancel or exit
+	  Type              Filter sessions by name
+	  Backspace/Del     Clear search
+	  Ctrl+D            Delete session
+
+	Features
+	  • Real-time incremental search
+	  • Create new sessions directly from search
+	  • Always shows "Create New Session" option
+	  • Layout selection for new sessions
 
 	Examples
 	  $ ze           Start interactive session manager

@@ -1,6 +1,6 @@
 {
   "name": "ze-cli",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Fast and intuitive Zellij session manager with real-time search",
   "type": "module",
   "main": "dist/cli.js",
@@ -8,7 +8,7 @@
     "ze": "./dist/cli.js"
   },
   "scripts": {
-    "build": "tsc && esbuild src/cli.tsx --bundle --platform=node --format=esm --outfile=dist/cli.js --external:ink --external:react --external:meow --external:chalk --external:ink-text-input --external:fuse.js",
+    "build": "tsc && esbuild src/cli.tsx --bundle --platform=node --format=esm --outfile=dist/cli.js --external:ink --external:react --external:meow --external:ink-text-input",
     "dev": "tsc --watch",
     "start": "node dist/cli.js",
     "test": "node --test src/**/*.test.js",
@@ -45,8 +45,6 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "chalk": "^5.4.1",
-    "fuse.js": "^7.1.0",
     "ink": "^6.0.1",
     "ink-text-input": "^6.0.0",
     "meow": "^13.2.0",

@@ -1,5 +1,4 @@
 import { execSync, spawnSync } from 'child_process';
-import { SessionInfo } from '../types.js';
 import { isInsideZellij, getCurrentSessionName } from './zellij.js';
 
 // Session Actions
@@ -67,16 +66,6 @@ export function deleteSession(sessionName: string): void {
     console.log(`Session '${sessionName}' deleted successfully`);
   } catch (error) {
     console.error(`Failed to delete session: ${sessionName}`);
-    process.exit(1);
-  }
-}
-
-export function killAllSessions(): void {
-  try {
-    execSync('zellij kill-all-sessions', { stdio: 'inherit' });
-    console.log('All sessions killed successfully');
-  } catch (error) {
-    console.error('Failed to kill all sessions');
     process.exit(1);
   }
 }

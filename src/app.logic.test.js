@@ -126,19 +126,17 @@ test('escape key navigation logic works correctly', () => {
 });
 
 test('delete session logic works correctly', () => {
-  // Simulate the logic from app.tsx lines 100-129
+  // Simulate the logic from app.tsx lines 71-86
   const canDeleteItem = (item) => {
-    return 'value' in item && item.value !== 'new-session' && item.value !== 'separator';
+    return 'value' in item && item.value !== 'new-session';
   };
 
   const deletableItem = { value: 'session1', label: 'Session 1' };
   const newSessionItem = { value: 'new-session', label: '[ + New Session ]' };
-  const separatorItem = { value: 'separator', label: '---' };
   const itemWithoutValue = { label: 'Some item' };
 
   assert.strictEqual(canDeleteItem(deletableItem), true);
   assert.strictEqual(canDeleteItem(newSessionItem), false);
-  assert.strictEqual(canDeleteItem(separatorItem), false);
   assert.strictEqual(canDeleteItem(itemWithoutValue), false);
 });
 

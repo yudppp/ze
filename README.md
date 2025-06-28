@@ -37,17 +37,18 @@ ze
 
 ### Features
 
-#### Outside Zellij
-- **Session List**: View all Zellij sessions with creation time
-- **Quick Attach**: Select and attach to existing sessions
-- **Create Sessions**: Create new sessions with optional custom names
+#### Smart Session Management
+- **Real-time Search**: Incremental search with instant filtering
+- **Create from Search**: Type any name to get "Create New Session" option
+- **Always Available**: "Create New Session" option always shown at bottom
 - **Layout Selection**: Choose from available layouts when creating sessions
-- **Delete Sessions**: Remove sessions with Ctrl+D
-- **Active Indicator**: Green dot (●) shows active sessions
+- **Session Actions**: View, attach, delete, and create sessions seamlessly
 
-#### Inside Zellij
-- Shows current session context
-- Simple exit option
+#### Enhanced User Experience  
+- **Simplified State**: Clean 3-mode interface (list → input → layout)
+- **Keyboard-First**: Optimized for terminal workflow
+- **Visual Feedback**: Active sessions marked with green dot (●)
+- **No Dependencies**: Minimal runtime dependencies for fast startup
 
 ## Keyboard Shortcuts
 
@@ -56,12 +57,13 @@ ze
   - `Enter` - Select item or confirm input
   - `Esc` or `Ctrl+C` - Cancel current action or exit
 
-- **Search**
+- **Search & Creation**
   - Type any characters - Filter sessions by name (incremental search)
-  - `Backspace` or `Delete` - Clear search character by character
+  - `Backspace`/`Delete` - Clear search character by character
+  - Search for non-existent name - Shows "Create New Session: [name]" option
 
 - **Session Management**
-  - `Ctrl+D` - Delete selected session (when outside Zellij)
+  - `Ctrl+D` - Delete selected session
 
 ## User Interface
 
@@ -75,11 +77,20 @@ ze
 └─────────────────────────────────────┘
 ```
 
-### Session Creation Flow
-1. **Name Input**: Enter session name (optional)
+### Search with Create Option
+```
+⚡ Select Session
+Search: my-project
+┌─────────────────────────────────────┐
+│ > Create New Session: my-project    │
+└─────────────────────────────────────┘
+```
+
+### Simplified Session Creation
+1. **Name Input**: Enter session name (optional, press Enter to continue)
 2. **Layout Selection**: Choose from available layouts
    - `default` - Standard layout (recommended)
-   - `compact` - Compact view
+   - `compact` - Compact view  
    - `classic` - Classic style
    - Custom layouts from `~/.config/zellij/layouts/`
 
