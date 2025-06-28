@@ -13,7 +13,7 @@ interface SelectListProps {
 
 const SelectList: React.FC<SelectListProps> = ({items, onSelect, onDelete}) => {
 	
-	const { searchQuery, filteredItems, addChar, removeChar } = useIncrementalSearch(items);
+	const { searchQuery, filteredItems, addChar, removeChar, clearSearch } = useIncrementalSearch(items);
 	const { selectedIndex, currentItem, moveUp, moveDown, resetSelection } = useSelection(filteredItems);
 
 
@@ -24,6 +24,10 @@ const SelectList: React.FC<SelectListProps> = ({items, onSelect, onDelete}) => {
 			moveDown();
 		} else if (key.return) {
 			if (currentItem) {
+				// Clear search when selecting Create Session item
+				if ('createSession' in currentItem && currentItem.createSession) {
+					clearSearch();
+				}
 				onSelect(currentItem);
 			}
 		} else if (key.backspace || key.delete) {

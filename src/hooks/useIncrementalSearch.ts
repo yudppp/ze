@@ -49,10 +49,15 @@ export function useIncrementalSearch<T extends SearchableItem>(items: T[]) {
     setSearchQuery(prev => prev.slice(0, -1));
   }, []);
 
+  const clearSearch = useCallback(() => {
+    setSearchQuery('');
+  }, []);
+
   return {
     searchQuery,
     filteredItems,
     addChar,
-    removeChar
+    removeChar,
+    clearSearch
   };
 }
