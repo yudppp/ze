@@ -1,6 +1,6 @@
 {
   "name": "ze-cli",
-  "version": "0.2.1",
+  "version": "0.2.4",
   "description": "Fast and intuitive Zellij session manager with real-time search",
   "type": "module",
   "main": "dist/cli.js",

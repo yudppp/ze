@@ -32,7 +32,8 @@ export function listSessions(): SessionInfo[] {
       let timeInfo = createdTime || 'active';
       
       return {
-        name,
+        type: 'session' as const,
+        label: name,
         created: timeInfo,
         isActive: !status.includes('EXITED')
       };

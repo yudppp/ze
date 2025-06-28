@@ -1,13 +1,13 @@
 import React from 'react';
 import {Box, Text, useInput} from 'ink';
-import {Action, SessionInfo} from '../types.js';
+import {SelectableItem} from '../types.js';
 import {useIncrementalSearch} from '../hooks/useIncrementalSearch.js';
 import {useSelection} from '../hooks/useSelection.js';
 
 interface SelectListProps {
-	items: (Action | SessionInfo)[];
-	onSelect: (item: Action | SessionInfo) => void;
-	onDelete?: (item: Action | SessionInfo) => void;
+	items: SelectableItem[];
+	onSelect: (item: SelectableItem) => void;
+	onDelete?: (item: SelectableItem) => void;
 	disableSearch?: boolean;
 }
 
@@ -19,25 +19,25 @@ const SelectList: React.FC<SelectListProps> = ({items, onSelect, onDelete, disab
 
 
 	useInput((input, key) => {
-		if (key.upArrow || (input === 'k' && key.ctrl)) {
+		if (key.upArrow) {
 			moveUp();
-		} else if (key.downArrow || (input === 'j' && key.ctrl)) {
+		} else if (key.downArrow) {
 			moveDown();
 		} else if (key.return) {
 			if (currentItem) {
 				// Clear search when selecting Create Session item
-				if ('createSession' in currentItem && currentItem.createSession) {
+				if (currentItem.type === 'action' && currentItem.actionType === 'create-session') {
 					clearSearch();
 				}
 				onSelect(currentItem);
 			}
+		} else if (((input === 'd' && key.ctrl) || input === '\u0004') && onDelete) {
+			if (currentItem && ((currentItem.type === 'action' && 'deletable' in currentItem) || currentItem.type === 'session')) {
+				onDelete(currentItem);
+			}
 		} else if (key.backspace || key.delete) {
 			if (!disableSearch) {
 				removeChar();
-			}
-		} else if ((input === 'd' && key.ctrl) && onDelete) {
-			if (currentItem && 'deletable' in currentItem && currentItem.deletable) {
-				onDelete(currentItem);
 			}
 		} else if (input && !key.ctrl && !key.meta && !key.shift) {
 			if (!disableSearch) {
@@ -58,10 +58,10 @@ const SelectList: React.FC<SelectListProps> = ({items, onSelect, onDelete, disab
 			)}
 			{filteredItems.map((item, index) => {
 				const isSelected = index === selectedIndex;
-				const label = 'label' in item ? item.label : item.name;
-				const description = 'description' in item ? item.description : '';
+				const label = item.label;
+				const description = item.type === 'action' ? (item.description || '') : '';
 				const isActive = description === 'active';
-				const isCreateSession = 'createSession' in item && item.createSession;
+				const isCreateSession = item.type === 'action' && item.actionType === 'create-session';
 
 				return (
 					<Box key={index}>
@@ -80,7 +80,7 @@ const SelectList: React.FC<SelectListProps> = ({items, onSelect, onDelete, disab
 			})}
 			<Box marginTop={1}>
 				<Text color="gray" dimColor>
-					↑/↓ or Ctrl+j/k: Navigate • Enter: Select{onDelete ? ' • Ctrl+D: Delete' : ''}{!disableSearch ? (searchQuery ? ' • Backspace/Del: Clear' : ' • Type: Search') : ''} • Esc: Exit
+					↑/↓: Navigate • Enter: Select{onDelete ? ' • Ctrl+D: Delete' : ''}{!disableSearch ? (searchQuery ? ' • Backspace/Del: Clear' : ' • Type: Search') : ''} • Esc: Exit
 				</Text>
 			</Box>
 		</Box>

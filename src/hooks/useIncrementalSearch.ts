@@ -1,9 +1,8 @@
 import { useState, useMemo, useCallback } from 'react';
-import { Action } from '../types.js';
+import { Action, CreateSessionAction, SessionAction } from '../types.js';
 
 export interface SearchableItem {
-  label?: string;
-  name?: string;
+  label: string;
 }
 
 export function useIncrementalSearch<T extends SearchableItem>(items: T[], disableSearch = false) {
@@ -16,17 +15,17 @@ export function useIncrementalSearch<T extends SearchableItem>(items: T[], disab
     }
 
     const filtered = searchQuery 
-      ? items.filter(item => {
-          const label = item.label || item.name || '';
-          return label.toLowerCase().includes(searchQuery.toLowerCase());
-        })
+      ? items.filter(item => 
+          item.label.toLowerCase().includes(searchQuery.toLowerCase())
+        )
       : items;
 
     // Always add "Create New Session" option when searching
     if (searchQuery) {
-      const createSessionAction: Action = {
+      const createSessionAction: CreateSessionAction = {
+        type: 'action' as const,
+        actionType: 'create-session',
         label: `Create New Session: ${searchQuery}`,
-        value: 'create-session',
         description: 'Create a new session with this name',
         action: () => searchQuery,
         createSession: true,
@@ -36,9 +35,10 @@ export function useIncrementalSearch<T extends SearchableItem>(items: T[], disab
     }
     
     // Add "Create New Session" option to regular list
-    const newSessionAction: Action = {
+    const newSessionAction: SessionAction = {
+      type: 'action' as const,
+      actionType: 'session',
       label: '[ + New Session ]',
-      value: 'new-session',
       description: 'Create a new session',
       action: () => 'new-session'
     };

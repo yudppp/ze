@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {Box, Text, useApp, useInput} from 'ink';
 import TextInput from 'ink-text-input';
 import SelectList from './components/SelectList.js';
-import {Action} from './types.js';
+import {Action, SelectableItem, CreateSessionAction, SessionAction, LayoutAction} from './types.js';
 import {listSessions, listLayouts} from './lib/zellij.js';
 import {attachSession, createSession, deleteSession} from './lib/actions.js';
 
@@ -24,11 +24,12 @@ const App: React.FC = () => {
 		}
 		
 		// Create session actions
-		const sessionActions: Action[] = sessions.map(session => ({
-			label: session.name,
-			value: session.name,
+		const sessionActions: SessionAction[] = sessions.map(session => ({
+			type: 'action' as const,
+			actionType: 'session' as const,
+			label: session.label,
 			description: session.isActive ? 'active' : session.created,
-			action: () => attachSession(session.name),
+			action: () => attachSession(session.label),
 			deletable: true,
 		}));
 		
@@ -48,36 +49,46 @@ const App: React.FC = () => {
 		}
 	});
 
-	const handleSelect = (item: Action | any) => {
+	const handleSelect = (item: SelectableItem) => {
 		// Handle "Create Session" from search
-		if ('createSession' in item && item.createSession && item.sessionName) {
-			setSessionName(item.sessionName);
+		if (item.type === 'action' && item.actionType === 'create-session') {
+			const createAction = item as CreateSessionAction;
+			setSessionName(createAction.sessionName);
 			setLayouts(listLayouts());
 			setMode('layout');
 			return;
 		}
 		
-		// Handle "New Session" option
-		if ('value' in item && item.value === 'new-session') {
+		// Handle "New Session" option (check for specific label)
+		if (item.type === 'action' && item.actionType === 'session' && item.label === '[ + New Session ]') {
 			setMode('input');
 			return;
 		}
 		
-		if ('action' in item && item.action) {
+		// Handle existing session selection
+		if (item.type === 'action' && item.actionType === 'session' && item.action) {
+			item.action();
+			return;
+		}
+		
+		// Fallback for other actions
+		if (item.type === 'action' && item.action) {
 			item.action();
 		}
 	};
 
-	const handleDelete = (item: Action | any) => {
-		if ('value' in item && item.value !== 'new-session') {
-			deleteSession(item.value);
+	const handleDelete = (item: SelectableItem) => {
+		if ((item.type === 'action' && item.actionType === 'session') || item.type === 'session') {
+			const sessionName = item.type === 'action' ? item.label : item.label;
+			deleteSession(sessionName);
 			// Refresh the session list
 			const sessions = listSessions();
-			const sessionActions: Action[] = sessions.map(session => ({
-				label: session.name,
-				value: session.name,
+			const sessionActions: SessionAction[] = sessions.map(session => ({
+				type: 'action' as const,
+				actionType: 'session' as const,
+				label: session.label,
 				description: session.isActive ? 'active' : session.created,
-				action: () => attachSession(session.name),
+				action: () => attachSession(session.label),
 				deletable: true,
 			}));
 			
@@ -125,9 +136,10 @@ const App: React.FC = () => {
 			return a.localeCompare(b);
 		});
 
-		const layoutActions: Action[] = sortedLayouts.map(layout => ({
+		const layoutActions: LayoutAction[] = sortedLayouts.map(layout => ({
+			type: 'action' as const,
+			actionType: 'layout' as const,
 			label: layout,
-			value: layout,
 			description: layout === 'default' ? 'Standard layout (recommended)' : 
 			            layout === 'compact' ? 'Compact view' : 
 			            layout === 'classic' ? 'Classic style' : 'Custom layout',
