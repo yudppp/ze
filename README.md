@@ -53,7 +53,7 @@ ze
 ## Keyboard Shortcuts
 
 - **Navigation**
-  - `↑`/`↓` or `Ctrl+j`/`Ctrl+k` - Navigate through items
+  - `↑`/`↓` - Navigate through items
   - `Enter` - Select item or confirm input
   - `Esc` or `Ctrl+C` - Cancel current action or exit
 
