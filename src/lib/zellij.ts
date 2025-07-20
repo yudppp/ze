@@ -11,7 +11,7 @@ export function getCurrentSessionName(): string | null {
 
 export function listSessions(): SessionInfo[] {
   try {
-    const output = execSync('zellij list-sessions', { encoding: 'utf8' });
+    const output = execSync('zellij list-sessions', { encoding: 'utf8', timeout: 5000 });
     const lines = output.trim().split('\n').filter(line => line.trim());
     
     return lines.map(line => {
@@ -39,10 +39,47 @@ export function listSessions(): SessionInfo[] {
       };
     }).filter(Boolean) as SessionInfo[];
   } catch (error) {
+    // Handle specific error cases
+    if (error instanceof Error) {
+      const errorMessage = error.message;
+      if (errorMessage.includes('timeout')) {
+        console.error('Zellij is not responding (timeout)');
+      } else if (errorMessage.includes('command not found') || errorMessage.includes('ENOENT')) {
+        console.error('Zellij is not installed or not in PATH');
+      } else {
+        console.error('Failed to list Zellij sessions');
+      }
+    }
     return [];
   }
 }
 
+export function isSessionActive(sessionName: string): boolean {
+  try {
+    // Get the current active session name
+    const currentSessionName = getCurrentSessionName();
+    
+    // If we're not inside Zellij or no current session, check session list
+    if (!currentSessionName) {
+      const sessions = listSessions();
+      const targetSession = sessions.find(session => session.label === sessionName);
+      return targetSession?.isActive || false;
+    }
+    
+    // If we have a current session name, compare it with the target session
+    // The session is active if it matches the current session name
+    return currentSessionName === sessionName;
+  } catch (error) {
+    // If there's an error, fall back to checking the session list
+    try {
+      const sessions = listSessions();
+      const targetSession = sessions.find(session => session.label === sessionName);
+      return targetSession?.isActive || false;
+    } catch {
+      return false;
+    }
+  }
+}
 
 export function listLayouts(): string[] {
   try {

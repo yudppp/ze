@@ -42,6 +42,9 @@ Thumbs.db
 # Claude specific
 .claude/
 
+# Kiro specific
+.kiro/
+
 # Temporary files
 *.tmp
 *.temp

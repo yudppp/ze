@@ -1,5 +1,7 @@
 export type ActionType = 'create-session' | 'session' | 'layout';
 
+export type Mode = 'list' | 'input' | 'layout' | 'confirm-delete';
+
 export interface CreateSessionAction {
 	type: 'action';
 	actionType: 'create-session';
@@ -37,3 +39,23 @@ export interface SessionInfo {
 }
 
 export type SelectableItem = Action | SessionInfo;
+
+export interface DeleteTarget {
+	sessionName: string;
+	isActive: boolean;
+}
+
+export interface ConfirmDeletePromptProps {
+	sessionName: string;
+	isActive: boolean;
+	onConfirm: () => void;
+	onCancel: () => void;
+}
+
+export type ConfirmState = 'waiting' | 'confirmed' | 'cancelled';
+
+export interface Message {
+	type: 'error' | 'warning' | 'info' | 'success';
+	message: string;
+	duration?: number;
+}
