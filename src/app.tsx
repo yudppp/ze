@@ -2,15 +2,19 @@ import React, {useState, useEffect} from 'react';
 import {Box, Text, useApp, useInput} from 'ink';
 import TextInput from 'ink-text-input';
 import SelectList from './components/SelectList.js';
-import {Action, SelectableItem, CreateSessionAction, SessionAction, LayoutAction} from './types.js';
-import {listSessions, listLayouts} from './lib/zellij.js';
-import {attachSession, createSession, deleteSession} from './lib/actions.js';
+import ConfirmDeletePrompt from './components/ConfirmDeletePrompt.js';
+import MessageDisplay from './components/MessageDisplay.js';
+import {Action, SelectableItem, CreateSessionAction, SessionAction, LayoutAction, DeleteTarget, Mode, Message} from './types.js';
+import {listSessions, listLayouts, isSessionActive} from './lib/zellij.js';
+import {attachSession, createSession, deleteSession, forceDeleteSession} from './lib/actions.js';
 
 const App: React.FC = () => {
 	const {exit} = useApp();
-	const [mode, setMode] = useState<'list' | 'input' | 'layout'>('list');
+	const [mode, setMode] = useState<Mode>('list');
 	const [sessionName, setSessionName] = useState('');
 	const [layouts, setLayouts] = useState<string[]>([]);
+	const [sessionToDelete, setSessionToDelete] = useState<DeleteTarget | null>(null);
+	const [message, setMessage] = useState<Message | null>(null);
 
 	const [actions, setActions] = useState<Action[]>([]);
 
@@ -43,6 +47,9 @@ const App: React.FC = () => {
 			} else if (mode === 'input') {
 				setMode('list');
 				setSessionName('');
+			} else if (mode === 'confirm-delete') {
+				setMode('list');
+				setSessionToDelete(null);
 			} else {
 				exit();
 			}
@@ -80,20 +87,89 @@ const App: React.FC = () => {
 	const handleDelete = (item: SelectableItem) => {
 		if ((item.type === 'action' && item.actionType === 'session') || item.type === 'session') {
 			const sessionName = item.type === 'action' ? item.label : item.label;
-			deleteSession(sessionName);
-			// Refresh the session list
-			const sessions = listSessions();
-			const sessionActions: SessionAction[] = sessions.map(session => ({
-				type: 'action' as const,
-				actionType: 'session' as const,
-				label: session.label,
-				description: session.isActive ? 'active' : session.created,
-				action: () => attachSession(session.label),
-				deletable: true,
-			}));
 			
-			setActions(sessionActions);
+			// Check if session is active using the new isSessionActive function
+			const isActive = isSessionActive(sessionName);
+			
+			if (isActive) {
+				// Route active sessions to confirmation prompt
+				setSessionToDelete({
+					sessionName,
+					isActive: true
+				});
+				setMode('confirm-delete');
+			} else {
+				// Handle non-active sessions with proper error handling
+				const result = deleteSession(sessionName);
+				
+				// Display the result message
+				setMessage({
+					type: result.type,
+					message: result.message,
+					duration: 3000
+				});
+				
+				// Clear message after duration
+				setTimeout(() => setMessage(null), 3000);
+				
+				if (result.success) {
+					// Refresh the session list only on successful deletion
+					const updatedSessions = listSessions();
+					const sessionActions: SessionAction[] = updatedSessions.map(session => ({
+						type: 'action' as const,
+						actionType: 'session' as const,
+						label: session.label,
+						description: session.isActive ? 'active' : session.created,
+						action: () => attachSession(session.label),
+						deletable: true,
+					}));
+					
+					setActions(sessionActions);
+				}
+			}
 		}
+	};
+
+	const handleConfirmDelete = () => {
+		if (sessionToDelete) {
+			// Execute force delete using the forceDeleteSession function
+			const result = forceDeleteSession(sessionToDelete.sessionName);
+			
+			// Display the result message
+			setMessage({
+				type: result.type,
+				message: result.message,
+				duration: 3000
+			});
+			
+			// Clear message after duration
+			setTimeout(() => setMessage(null), 3000);
+			
+			if (result.success) {
+				// Refresh the session list only on successful deletion
+				const updatedSessions = listSessions();
+				const sessionActions: SessionAction[] = updatedSessions.map(session => ({
+					type: 'action' as const,
+					actionType: 'session' as const,
+					label: session.label,
+					description: session.isActive ? 'active' : session.created,
+					action: () => attachSession(session.label),
+					deletable: true,
+				}));
+				
+				setActions(sessionActions);
+			}
+			
+			// Clean up state and return to list mode
+			setMode('list');
+			setSessionToDelete(null);
+		}
+	};
+
+	const handleCancelDelete = () => {
+		// Clean up state and return to list mode
+		setMode('list');
+		setSessionToDelete(null);
 	};
 
 	if (mode === 'input') {
@@ -163,8 +239,20 @@ const App: React.FC = () => {
 		);
 	}
 
+	if (mode === 'confirm-delete' && sessionToDelete) {
+		return (
+			<ConfirmDeletePrompt
+				sessionName={sessionToDelete.sessionName}
+				isActive={sessionToDelete.isActive}
+				onConfirm={handleConfirmDelete}
+				onCancel={handleCancelDelete}
+			/>
+		);
+	}
+
 	return (
 		<Box flexDirection="column" paddingY={1}>
+			{message && <MessageDisplay message={message} />}
 			<Box marginBottom={1}>
 				<Text bold color="cyan">
 					⚡ Select Session
